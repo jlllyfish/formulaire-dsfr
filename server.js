@@ -1,34 +1,29 @@
-// api/grist.js
-export default async function handler(req, res) {
-  // CORS headers pour permettre les requêtes depuis votre site
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+// server.js
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-  // Gérer les requêtes OPTIONS (preflight)
-  if (req.method === "OPTIONS") {
-    res.status(200).end();
-    return;
-  }
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  // Vérifier la méthode
-  if (req.method !== "GET") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+// Servir les fichiers statiques
+app.use(express.static(path.join(__dirname, "dist")));
+
+// Route API pour Grist
+app.get("/api/grist", async (req, res) => {
   try {
     const { doc, table } = req.query;
     const API_KEY = process.env.VITE_GRIST_API_KEY;
 
     if (!API_KEY) {
-      res.status(500).json({ error: "API key not configured" });
-      return;
+      return res.status(500).json({ error: "API key not configured" });
     }
 
     if (!doc || !table) {
-      res.status(400).json({ error: "Missing doc or table parameter" });
-      return;
+      return res.status(400).json({ error: "Missing doc or table parameter" });
     }
 
     console.log(`🔍 Fetching Grist data: ${doc}/${table}`);
@@ -45,10 +40,9 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       console.error(`❌ Grist API error: ${response.status}`);
-      res.status(response.status).json({
+      return res.status(response.status).json({
         error: `Grist API error: ${response.status}`,
       });
-      return;
     }
 
     const data = await response.json();
@@ -56,10 +50,19 @@ export default async function handler(req, res) {
 
     res.json(data);
   } catch (error) {
-    console.error("❌ Serverless function error:", error);
+    console.error("❌ Server error:", error);
     res.status(500).json({
       error: "Internal server error",
       message: error.message,
     });
   }
-}
+});
+
+// Fallback pour React Router
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
