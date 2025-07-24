@@ -287,20 +287,13 @@ function App() {
 
       console.log("🔍 Test d'accès à la table...");
 
-      const response = await fetch(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(
-          "https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/" +
-            DOC_ID +
-            "/tables/" +
-            TABLE_NAME +
-            "/records"
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        }
-      );
+      // API key dans l'URL au lieu du header
+      const gristUrl = `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records?auth=${API_KEY}`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        gristUrl
+      )}`;
+
+      const response = await fetch(proxyUrl);
 
       console.log("📡 Status:", response.status);
 
@@ -310,28 +303,14 @@ function App() {
 
         if (data.records && data.records.length > 0) {
           console.log("📋 Premier enregistrement:", data.records[0]);
-          console.log(
-            "📋 Colonnes disponibles:",
-            Object.keys(data.records[0].fields)
-          );
-
-          alert(`✅ Table accessible ! 
-${data.records.length} enregistrements
-Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
+          alert(`✅ Table accessible ! ${data.records.length} enregistrements`);
         } else {
           alert("⚠️ Table vide ou pas d'enregistrements");
         }
       } else {
         const errorText = await response.text();
         console.error("❌ Erreur table:", errorText);
-
-        if (response.status === 404) {
-          alert(
-            "❌ Table 'Consortium_EFP' introuvable. Vérifiez le nom exact."
-          );
-        } else {
-          alert(`❌ Erreur ${response.status}`);
-        }
+        alert(`❌ Erreur ${response.status}`);
       }
     } catch (error) {
       console.error("❌ Erreur:", error);
@@ -352,33 +331,24 @@ Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
       const TABLE_NAME = "Consortium_EFP";
       const API_KEY = import.meta.env.VITE_GRIST_API_KEY;
 
-      const response = await fetch(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(
-          "https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/" +
-            DOC_ID +
-            "/tables/" +
-            TABLE_NAME +
-            "/records"
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        }
-      );
+      // API key dans l'URL au lieu du header
+      const gristUrl = `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records?auth=${API_KEY}`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        gristUrl
+      )}`;
+
+      const response = await fetch(proxyUrl);
 
       if (response.ok) {
         const data = await response.json();
 
-        // Filtrer les résultats par nom/prénom
         const filtered = data.records
           .filter((record) => {
             const nom = (record.fields.Nom_Majuscule || "").toLowerCase();
             const searchLower = term.toLowerCase();
-
             return nom.includes(searchLower);
           })
-          .slice(0, 10); // Limiter à 10 résultats
+          .slice(0, 10);
 
         setSearchResults(filtered);
       }
