@@ -288,7 +288,13 @@ function App() {
       console.log("🔍 Test d'accès à la table...");
 
       const response = await fetch(
-        `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(
+          "https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/" +
+            DOC_ID +
+            "/tables/" +
+            TABLE_NAME +
+            "/records"
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${API_KEY}`,
@@ -347,7 +353,13 @@ Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
       const API_KEY = import.meta.env.VITE_GRIST_API_KEY;
 
       const response = await fetch(
-        `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(
+          "https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/" +
+            DOC_ID +
+            "/tables/" +
+            TABLE_NAME +
+            "/records"
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${API_KEY}`,
