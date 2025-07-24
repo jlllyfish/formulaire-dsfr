@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm run build && npm run preview"
+
+[env]
+VITE_GRIST_API_KEY = "${{VITE_GRIST_API_KEY}}"
