@@ -485,13 +485,13 @@ Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
                   </div>
                 </div>
                 <div className="fr-header__service">
-                  <a href="/" title="Accueil - EUROPASS MOBILITÉ">
+                  <a href="/" title="Accueil - KIT E+">
                     <p className="fr-header__service-title">
-                      Contrat pédagogique
+                      Europass mobilité
                     </p>
                   </a>
                   <p className="fr-header__service-tagline">
-                    Gestion des déplacements professionnels
+                    Contrat pédagogique
                   </p>
                 </div>
               </div>
