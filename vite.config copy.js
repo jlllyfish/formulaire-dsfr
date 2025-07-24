@@ -3,16 +3,22 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: "dist",
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: process.env.PORT || 4173,
+    allowedHosts: ["formulaire-erasmus-efp.up.railway.app"],
+  },
   server: {
-    port: 5173,
+    host: "0.0.0.0",
+    port: process.env.PORT || 5173,
     proxy: {
-      "/api/grist": {
-        target: "https://grist.numerique.gouv.fr",
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/grist/, ""),
-        headers: {
-          Origin: "https://grist.numerique.gouv.fr",
-        },
+        secure: false,
       },
     },
   },
