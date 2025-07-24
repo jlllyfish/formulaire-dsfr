@@ -208,7 +208,7 @@ function App() {
           <div class="logos-row">
             <div class="logos-row">
             <img src="/logo-ministere.png" alt="Ministère de l'agriculture" class="ministere-logo" />
-            <img src="/Logo-moow.png" alt="Logo du service" class="service-logo" />
+            <img src="./Logo-moow.png" alt="Logo du service" class="service-logo" />
           </div>
           <div class="titles">
             <h2>EUROPASS MOBILITÉ / EUROPASS MOBILITY</h1>
@@ -448,7 +448,7 @@ function App() {
                   </div>
                   <div className="fr-header__operator">
                     <img
-                      src="/Logo-moow.png"
+                      src="./Logo-moow.png"
                       alt="Logo du service"
                       style={{
                         height: "60px",
