@@ -206,12 +206,11 @@ function App() {
       <body>
         <div class="header">
           <div class="logos-row">
-            <div class="logos-row">
-            <img src="/logo-ministere.png" alt="Ministère de l'agriculture" class="ministere-logo" />
+            <img src="./logo-ministere.png" alt="Ministère de l'agriculture" class="ministere-logo" />
             <img src="./Logo-moow.png" alt="Logo du service" class="service-logo" />
           </div>
           <div class="titles">
-            <h2>EUROPASS MOBILITÉ / EUROPASS MOBILITY</h1>
+            <h1>EUROPASS MOBILITÉ / EUROPASS MOBILITY</h1>
             <div class="subtitle">Contrat pédagogique / Learning agreement</div>
             <p class="date-info">
               Généré le : ${new Date().toLocaleDateString("fr-FR", {
@@ -287,13 +286,14 @@ function App() {
 
       console.log("🔍 Test d'accès à la table...");
 
-      // API key dans l'URL au lieu du header
-      const gristUrl = `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records?auth=${API_KEY}`;
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-        gristUrl
-      )}`;
-
-      const response = await fetch(proxyUrl);
+      const response = await fetch(
+        `/api/grist/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
 
       console.log("📡 Status:", response.status);
 
@@ -303,14 +303,28 @@ function App() {
 
         if (data.records && data.records.length > 0) {
           console.log("📋 Premier enregistrement:", data.records[0]);
-          alert(`✅ Table accessible ! ${data.records.length} enregistrements`);
+          console.log(
+            "📋 Colonnes disponibles:",
+            Object.keys(data.records[0].fields)
+          );
+
+          alert(`✅ Table accessible ! 
+${data.records.length} enregistrements
+Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
         } else {
           alert("⚠️ Table vide ou pas d'enregistrements");
         }
       } else {
         const errorText = await response.text();
         console.error("❌ Erreur table:", errorText);
-        alert(`❌ Erreur ${response.status}`);
+
+        if (response.status === 404) {
+          alert(
+            "❌ Table 'Consortium_EFP' introuvable. Vérifiez le nom exact."
+          );
+        } else {
+          alert(`❌ Erreur ${response.status}`);
+        }
       }
     } catch (error) {
       console.error("❌ Erreur:", error);
@@ -331,24 +345,27 @@ function App() {
       const TABLE_NAME = "Consortium_EFP";
       const API_KEY = import.meta.env.VITE_GRIST_API_KEY;
 
-      // API key dans l'URL au lieu du header
-      const gristUrl = `https://grist.numerique.gouv.fr/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records?auth=${API_KEY}`;
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-        gristUrl
-      )}`;
-
-      const response = await fetch(proxyUrl);
+      const response = await fetch(
+        `/api/grist/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
 
+        // Filtrer les résultats par nom uniquement
         const filtered = data.records
           .filter((record) => {
             const nom = (record.fields.Nom_Majuscule || "").toLowerCase();
             const searchLower = term.toLowerCase();
+
             return nom.includes(searchLower);
           })
-          .slice(0, 10);
+          .slice(0, 10); // Limiter à 10 résultats
 
         setSearchResults(filtered);
       }
@@ -618,7 +635,7 @@ function App() {
                     setSearchTerm(e.target.value);
                     searchParticipants(e.target.value);
                   }}
-                  placeholder="Tapez au moins 2 caractères..."
+                  placeholder="Tapez le nom de famille..."
                 />
               </div>
 
