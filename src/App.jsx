@@ -287,7 +287,7 @@ function App() {
       console.log("🔍 Test d'accès à la table...");
 
       const response = await fetch(
-        `/api/grist/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        `/api/grist?doc=${DOC_ID}&table=${TABLE_NAME}`,
         {
           headers: {
             Authorization: `Bearer ${API_KEY}`,
@@ -346,7 +346,7 @@ Colonnes: ${Object.keys(data.records[0].fields).join(", ")}`);
       const API_KEY = import.meta.env.VITE_GRIST_API_KEY;
 
       const response = await fetch(
-        `/api/grist/o/srfd-occ/api/docs/${DOC_ID}/tables/${TABLE_NAME}/records`,
+        `/api/grist?doc=${DOC_ID}&table=${TABLE_NAME}`,
         {
           headers: {
             Authorization: `Bearer ${API_KEY}`,

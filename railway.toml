@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "npm run build && npm run preview"
+startCommand = "npm run preview -- --host 0.0.0.0 --port $PORT"
 
-[env]
-VITE_GRIST_API_KEY = "${{VITE_GRIST_API_KEY}}"
+[[services]]
+name = "web"
